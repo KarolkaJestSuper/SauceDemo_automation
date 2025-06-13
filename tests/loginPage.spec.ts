@@ -1,29 +1,43 @@
 import { test, expect } from '@playwright/test';
+import { url } from 'inspector';
 
-test('test login with correct creds', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-  await expect(page.locator('.title')).toHaveText('Products');
-});
+test.describe('User login fo sauceDemo', () => {
+  //Arrange
+  const url = 'https://www.saucedemo.com/';
+  const userId = 'standard_user';
+  const userPass = 'secret_sauce';
+  const expectedError = 'Epic sadface: Username and password do not match any user in this service';
+//Act
+  test('succesfull login with correct creds', async ({ page }) => {
 
-test('login with incorrect password', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').click();
-  await page.locator('[data-test="password"]').fill('secret_sauc');
-  await page.locator('[data-test="login-button"]').click();
-  await expect (page.locator('[data-test="error"]')).toHaveText('Epic sadface: Username and password do not match any user in this service');
-});
+    await page.goto(url);
+    await page.locator('#user-name').fill(userId);
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
+   
+//Assert
+    await expect(page.locator('.title')).toHaveText('Products');
+  });
+// Arrange
+// Act
+  test('unsuccessful login with incorrect password', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill(userId);
+    await page.locator('#password').fill('secret_sue');
+    await page.locator('#login-button').click();
 
-test('login with incorrect username', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="username"]').fill('karo123');
-  await page.locator('[data-test="password"]').click();
-  await page.locator('[data-test="password"]').fill('secret_sauc');
-  await page.locator('[data-test="login-button"]').click();
-  // await expect (page.locator('[data-test="error"]')).toHaveText('Epic sadface: Username and password do not match any user in this service');
-});
+// Assert
+    await expect (page.locator('[data-test="error"]')).toHaveText(expectedError);
+  });
+  
+// Arrange
+// Act
+  test('unsuccessful login with incorrect username', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill('karo123');
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
+// Assert
+    await expect (page.locator('[data-test="error"]')).toHaveText(expectedError);
+  });
+  });

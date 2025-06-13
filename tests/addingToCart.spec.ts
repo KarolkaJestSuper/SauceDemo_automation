@@ -1,50 +1,61 @@
 import { test, expect } from '@playwright/test';
 
-test('test list of items', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-  await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(6);
-});
-test('test add to cart', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-  await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-  await page.locator('[data-test="shopping-cart-link"]').click();
-  await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1)
-//   toBeVisible();
-});
+test.describe('Adding to cart tests', () => {
+// Arrange
+  const url = 'https://www.saucedemo.com/';
+  const userName = 'standard_user';
+  const userPass = 'secret_sauce';
+// Act
+  test('listing all items from the main page', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill(userName);
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
 
-test('test removing from the cart', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-  await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-  await page.locator('[data-test="shopping-cart-link"]').click();
-  await page.locator('[data-test="inventory-item"]').click();
-  await page.locator('[data-test="remove-sauce-labs-backpack"]').click();
-  // await expect(page.locator('[data-test="cart-list"]')).toBeEmpty();
-  // await expect(page.locator('[data-test="inventory-item"]')).toNotExist();
-  await expect(page.locator('.cart_quantity')).toHaveCount(0);
-  // await expect(page.locator('.shopping_cart_badge')).not.toBeVisible();
-});
+// Assert
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(6);
+  });
 
-test.only('test added to cart details', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-//   await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-//   await page.locator('[data-test="shopping-cart-link"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-  await page.locator('[data-test="item-4-title-link"]').click();
-  await expect(page.locator('[data-test="inventory-item-name"]')).toBeVisible();
-  await expect(page.locator('[data-test="inventory-item-desc"]')).toBeVisible();
-});
-//   await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1)
-//   toBeVisible();
-// });
+// Arrange
+// Act
+  test('adding an item to the cart', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill(userName);
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
+    await page.locator('#add-to-cart-sauce-labs-backpack').click();
+    await page.locator('[data-test="shopping-cart-link"]').click();
+
+// Assert
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1)
+  });
+
+// Arrange
+// Act
+  test('removing from the cart', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill(userName);
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
+    await page.locator('#add-to-cart-sauce-labs-backpack').click();
+    await page.locator('[data-test="shopping-cart-link"]').click();
+    await page.locator('[data-test="inventory-item"]').click();
+    await page.locator('[data-test="remove-sauce-labs-backpack"]').click();
+    
+// Assert
+    await expect(page.locator('.cart_quantity')).toHaveCount(0);
+
+  });
+
+  test('details of the added to cart item', async ({ page }) => {
+    await page.goto(url);
+    await page.locator('#user-name').fill(userName);
+    await page.locator('#password').fill(userPass);
+    await page.locator('#login-button').click();
+    await page.locator('#add-to-cart-sauce-labs-backpack').click();
+    await page.locator('[data-test=item-4-title-link]').click();
+    await expect(page.locator('[data-test="inventory-item-name"]')).toHaveText('Sauce Labs Backpack');
+
+  });
+ 
+  });
